@@ -189,7 +189,7 @@ impl Analyser {
         self.comments
             .entry(el_offset)
             .and_modify(|c| c.push(comment.clone()))
-            .or_insert(vec![comment]);
+            .or_insert_with(|| vec![comment]);
     }
 
     fn clear_gp_regs(&mut self) {

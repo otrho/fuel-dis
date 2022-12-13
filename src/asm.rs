@@ -1,5 +1,5 @@
 use std::{
-    collections::BTreeMap,
+    collections::{btree_map::Entry, BTreeMap},
     fmt::{self, Display, Formatter},
     rc::Rc,
 };
@@ -9,8 +9,8 @@ use fuel_asm::Opcode;
 
 use crate::{
     colorscheme::{Pastel, RgbScheme},
-    markup::Markup,
     consts::const_reg_name,
+    markup::Markup,
 };
 
 mod analysis;
@@ -29,8 +29,8 @@ impl Asm {
 
     fn insert(&mut self, offset: usize, element: Element) {
         // Avoiding a clone of element by avoiding .or_insert() on the Entry below.
-        if !self.0.contains_key(&offset) {
-            self.0.insert(offset, element);
+        if let Entry::Vacant(entry) = self.0.entry(offset) {
+            entry.insert(element);
         } else {
             self.0.entry(offset).and_modify(|cur_element| {
                 if *cur_element != element {
@@ -143,7 +143,7 @@ impl Display for Asm {
             } else {
                 if let ElementValue::Label(_) = &element.value {
                     // Put a blank between blocks.
-                    writeln!(f, "")?;
+                    writeln!(f)?;
                 }
                 writeln!(f, "{}", asm_to_string(offset, element))
             }
