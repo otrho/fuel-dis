@@ -1,7 +1,10 @@
 [package]
-name = "forc-dis"
-version = "0.2.0"
+description = "A pretty disassembler for Fuel VM bytecode."
 edition = "2021"
+license-file = "LICENSE"
+name = "forc-dis"
+repository = "https://github.com/otrho/fuel-dis/"
+version = "0.2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
