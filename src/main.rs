@@ -36,12 +36,12 @@ fn run() -> Result<(), Error> {
 }
 
 fn find_binary_file_path() -> Result<PathBuf, Error> {
-    get_path_arg()
-        .or_else(get_pkg_binary_path)
-        .ok_or_else(|| Error::new(
+    get_path_arg().or_else(get_pkg_binary_path).ok_or_else(|| {
+        Error::new(
             "Unable to determine bytecode binary file path.",
             Some("use: forc-dis [path] or forc dis from within a Sway project"),
-        ))
+        )
+    })
 }
 
 fn get_path_arg() -> Option<PathBuf> {

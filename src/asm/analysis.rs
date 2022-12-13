@@ -16,6 +16,8 @@ pub(crate) fn analyse(mut asm: Asm, bytes: Rc<[u8]>) -> Result<Asm, Error> {
         }
     }
 
+    let ds_val = analyser.get_reg_val(&DS_REG_NUM).copied();
+
     macro_rules! join_comments {
         ($cmnt_ty:pat, $var:ident, $offset:ident) => {
             analyser.comments.get(&$offset).and_then(|cs| {
@@ -62,6 +64,17 @@ pub(crate) fn analyse(mut asm: Asm, bytes: Rc<[u8]>) -> Result<Asm, Error> {
         let comment = join_comments!(Comment::Other(s), s, offset);
 
         asm.insert(offset, Element { value, comment });
+    }
+
+    // Insert a label for the data section.
+    if let Some(ds_val) = ds_val {
+        asm.insert(
+            ds_val,
+            Element {
+                value: ElementValue::Label("DATA SECTION".to_owned()),
+                comment: None,
+            },
+        );
     }
 
     // Fill in any gaps with hex dumps.  (Use an Iterator::scan() instead?)

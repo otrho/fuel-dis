@@ -92,7 +92,7 @@ impl Display for Asm {
                             Markup::text("WORD")
                                 .colored(Pastel::opcode())
                                 .indented()
-                                .padded(12)
+                                .padded(16)
                                 .append(
                                     Markup::text(format!("{value:016x}h"))
                                         .colored(Pastel::literal()),
@@ -108,7 +108,10 @@ impl Display for Asm {
                             let ascii_str = printable_str(&bytes[offset..offset + len]);
                             Markup::sep(
                                 vec![
-                                    Markup::text(format!("BYTES[{len}]")).colored(Pastel::opcode()),
+                                    Markup::text(format!("BYTES[{len}]"))
+                                        .colored(Pastel::opcode())
+                                        .indented()
+                                        .padded(15),
                                     Markup::text(num_str).colored(Pastel::literal()),
                                     Markup::text(ascii_str).colored(Pastel::literal()),
                                 ],
