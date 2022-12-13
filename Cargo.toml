@@ -1,6 +1,6 @@
 [package]
-name = "fuel-dis"
-version = "0.1.0"
+name = "forc-dis"
+version = "0.2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 colorful = "0.2"
 fuel-asm = "0.9"
+toml = "0.5"

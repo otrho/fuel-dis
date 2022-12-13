@@ -9,6 +9,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0bca1619ff57dd7a56b58a8e25ef4199f123e78e503fe1653410350a1b98ae65"
 
 [[package]]
+name = "forc-dis"
+version = "0.2.0"
+dependencies = [
+ "colorful",
+ "fuel-asm",
+ "toml",
+]
+
+[[package]]
 name = "fuel-asm"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -16,14 +25,6 @@ checksum = "f4386d0dbf40d072b82a80caafce00494f32862b688b47c1e19091a8145606e6"
 dependencies = [
  "fuel-types",
  "serde",
-]
-
-[[package]]
-name = "fuel-dis"
-version = "0.1.0"
-dependencies = [
- "colorful",
- "fuel-asm",
 ]
 
 [[package]]
@@ -82,6 +83,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "toml"
+version = "0.5.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8d82e1a7758622a465f8cee077614c73484dac5b836c02ff6a40d5d1010324d7"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
