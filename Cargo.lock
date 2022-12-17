@@ -10,7 +10,7 @@ checksum = "0bca1619ff57dd7a56b58a8e25ef4199f123e78e503fe1653410350a1b98ae65"
 
 [[package]]
 name = "forc-dis"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "colorful",
  "fuel-asm",
