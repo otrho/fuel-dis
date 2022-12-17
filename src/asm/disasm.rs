@@ -37,6 +37,30 @@ impl<'a> Disassembler<'a> {
                 continue;
             }
 
+            if offset == self.bytes.len() {
+                // This is probably an empty binary with only the prelude.
+                self.asm.insert(
+                    offset,
+                    Element {
+                        value: ElementValue::Note,
+                        comment: Some("Disassembly ran off the end of the binary.".to_owned()),
+                    },
+                );
+                continue;
+            }
+
+            if offset > self.bytes.len() {
+                // Corrupt jump out into space..?
+                self.asm.insert(
+                    offset,
+                    Element {
+                        value: ElementValue::Note,
+                        comment: Some("Disassembly attempted to jump to this bad address.".to_owned()),
+                    },
+                );
+                continue;
+            }
+
             let (opcode, next_offsets) = decode(offset, &self.bytes[offset..offset + 4]);
             self.asm.insert(
                 offset,

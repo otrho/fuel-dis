@@ -56,6 +56,7 @@ enum ElementValue {
     BytesDatum(Rc<[u8]>, usize),
     Unused(Rc<[u8]>, usize),
     Pair(Box<Element>, Box<Element>),
+    Note,
 }
 
 impl Element {
@@ -63,7 +64,7 @@ impl Element {
         use ElementValue::*;
         match &self.value {
             Operation(_) => 4,
-            Label(_) => 0,
+            Label(_) | Note => 0,
             WordDatum(_) => 8,
             BytesDatum(_, size) => *size,
             Unused(_, size) => *size,
@@ -118,6 +119,7 @@ impl Display for Asm {
                                 Markup::Space,
                             )
                         }
+                        ElementValue::Note => Markup::text("!! NOTE !!").colored(Pastel::error()),
                         ElementValue::Unused(..) => {
                             unreachable!("Handled above.")
                         }
@@ -186,9 +188,16 @@ fn prettify(opcode: &Opcode) -> Markup {
         ADDI(dst_reg, lhs_reg, imm) => {
             fmt_op!("addi", name_reg(dst_reg), name_reg(lhs_reg), imm_dec(imm))
         }
-        ALOC(..) => todo!(),
-        AND(..) => todo!(),
-        ANDI(..) => todo!(),
+        ALOC(size_reg) => fmt_op!("aloc", name_reg(size_reg)),
+        AND(dst_reg, lhs_reg, rhs_reg) => fmt_op!(
+            "and",
+            name_reg(dst_reg),
+            name_reg(lhs_reg),
+            name_reg(rhs_reg)
+        ),
+        ANDI(dst_reg, lhs_reg, imm) => {
+            fmt_op!("andi", name_reg(dst_reg), name_reg(lhs_reg), imm_dec(imm))
+        }
         BAL(dst_reg, asset_reg, ctrct_reg) => fmt_op!(
             "bal",
             name_reg(dst_reg),
@@ -196,8 +205,8 @@ fn prettify(opcode: &Opcode) -> Markup {
             name_reg(ctrct_reg)
         ),
         BHEI(dst_reg) => fmt_op!("bhei", name_reg(dst_reg)),
-        BHSH(..) => todo!(),
-        BURN(..) => todo!(),
+        BHSH(dst_reg, blk_reg) => fmt_op!("bhsh", name_reg(dst_reg), name_reg(blk_reg)),
+        BURN(coins_reg) => fmt_op!("burn", name_reg(coins_reg)),
         CALL(to_reg, coins_reg, asset_reg, gas_reg) => fmt_op!(
             "call",
             name_reg(to_reg),
@@ -205,19 +214,27 @@ fn prettify(opcode: &Opcode) -> Markup {
             name_reg(asset_reg),
             name_reg(gas_reg)
         ),
-        CB(..) => todo!(),
-        CCP(..) => todo!(),
+        CB(addr_reg) => fmt_op!("cb", name_reg(addr_reg)),
+        CCP(dst_reg, src_reg, code_reg, len_reg) => fmt_op!(
+            "ccp",
+            name_reg(dst_reg),
+            name_reg(src_reg),
+            name_reg(code_reg),
+            name_reg(len_reg)
+        ),
         CFEI(size) => fmt_op!("cfei", imm_dec(size)),
         CFSI(size) => fmt_op!("cfsi", imm_dec(size)),
-        CROO(..) => todo!(),
-        CSIZ(..) => todo!(),
+        CROO(dst_reg, src_reg) => fmt_op!("croo", name_reg(dst_reg), name_reg(src_reg)),
+        CSIZ(dst_reg, src_reg) => fmt_op!("csiz", name_reg(dst_reg), name_reg(src_reg)),
         DIV(dst_reg, lhs_reg, rhs_reg) => fmt_op!(
             "div",
             name_reg(dst_reg),
             name_reg(lhs_reg),
             name_reg(rhs_reg)
         ),
-        DIVI(..) => todo!(),
+        DIVI(dst_reg, src_reg, imm) => {
+            fmt_op!("divi", name_reg(dst_reg), name_reg(src_reg), imm_dec(imm))
+        }
         ECR(dst_reg, sig_reg, hash_reg) => fmt_op!(
             "ecr",
             name_reg(dst_reg),
@@ -230,9 +247,16 @@ fn prettify(opcode: &Opcode) -> Markup {
             name_reg(lhs_reg),
             name_reg(rhs_reg)
         ),
-        EXP(..) => todo!(),
-        EXPI(..) => todo!(),
-        FLAG(..) => todo!(),
+        EXP(dst_reg, lhs_reg, rhs_reg) => fmt_op!(
+            "exp",
+            name_reg(dst_reg),
+            name_reg(lhs_reg),
+            name_reg(rhs_reg)
+        ),
+        EXPI(dst_reg, lhs_reg, imm) => {
+            fmt_op!("expi", name_reg(dst_reg), name_reg(lhs_reg), imm_dec(imm))
+        }
+        FLAG(src_reg) => fmt_op!("flag", name_reg(src_reg)),
         GM(reg, imm) => fmt_op!(
             "gm",
             name_reg(reg),
@@ -332,13 +356,41 @@ fn prettify(opcode: &Opcode) -> Markup {
         ),
         JI(offs) => fmt_op!("ji", imm_addr(offs * 4)),
         JMP(reg) => fmt_op!("jmp", name_reg(reg)),
-        JNE(..) => todo!(),
-        JNEI(..) => todo!(),
+        JNE(lhs_reg, rhs_reg, addr_reg) => fmt_op!(
+            "jne",
+            name_reg(lhs_reg),
+            name_reg(rhs_reg),
+            name_reg(addr_reg)
+        ),
+        JNEI(lhs_reg, rhs_reg, offs) => fmt_op!(
+            "jnei",
+            name_reg(lhs_reg),
+            name_reg(rhs_reg),
+            imm_addr(*offs as u32 * 4)
+        ),
         JNZI(reg, offs) => fmt_op!("jnzi", name_reg(reg), imm_addr(offs * 4)),
-        K256(..) => todo!(),
-        LB(..) => todo!(),
-        LDC(..) => todo!(),
-        LOG(..) => todo!(),
+        K256(dst_reg, src_reg, len_reg) => fmt_op!(
+            "k256",
+            name_reg(dst_reg),
+            name_reg(src_reg),
+            name_reg(len_reg)
+        ),
+        LB(dst_reg, src_reg, offs) => {
+            fmt_op!("lb", name_reg(dst_reg), name_reg(src_reg), imm_dec(offs))
+        }
+        LDC(id_reg, offs_reg, len_reg) => fmt_op!(
+            "ldc",
+            name_reg(id_reg),
+            name_reg(offs_reg),
+            name_reg(len_reg)
+        ),
+        LOG(a_reg, b_reg, c_reg, d_reg) => fmt_op!(
+            "log",
+            name_reg(a_reg),
+            name_reg(b_reg),
+            name_reg(c_reg),
+            name_reg(d_reg)
+        ),
         LOGD(reg0, reg1, reg2, reg3) => fmt_op!(
             "logd",
             name_reg(reg0),
@@ -360,8 +412,8 @@ fn prettify(opcode: &Opcode) -> Markup {
                 imm_dec(word_offs)
             )
         }
-        MCL(..) => todo!(),
-        MCLI(..) => todo!(),
+        MCL(offs_reg, len_reg) => fmt_op!("mcl", name_reg(offs_reg), name_reg(len_reg)),
+        MCLI(offs_reg, len) => fmt_op!("mcli", name_reg(offs_reg), imm_dec(len)),
         MCP(dst_reg, src_reg, len_reg) => fmt_op!(
             "mcp",
             name_reg(dst_reg),
@@ -378,13 +430,30 @@ fn prettify(opcode: &Opcode) -> Markup {
             name_reg(rhs_reg),
             name_reg(len_reg)
         ),
-        MINT(..) => todo!(),
-        MLOG(..) => todo!(),
-        MOD(..) => todo!(),
-        MODI(..) => todo!(),
+        MINT(coin_reg) => fmt_op!("mint", name_reg(coin_reg)),
+        MLOG(dst_reg, lhs_reg, rhs_reg) => fmt_op!(
+            "mlog",
+            name_reg(dst_reg),
+            name_reg(lhs_reg),
+            name_reg(rhs_reg)
+        ),
+        MOD(dst_reg, lhs_reg, rhs_reg) => fmt_op!(
+            "mod",
+            name_reg(dst_reg),
+            name_reg(lhs_reg),
+            name_reg(rhs_reg)
+        ),
+        MODI(dst_reg, lhs_reg, imm) => {
+            fmt_op!("modi", name_reg(dst_reg), name_reg(lhs_reg), imm_dec(imm))
+        }
         MOVE(dst_reg, src_reg) => fmt_op!("move", name_reg(dst_reg), name_reg(src_reg)),
         MOVI(dst_reg, imm) => fmt_op!("movi", name_reg(dst_reg), imm_dec(imm)),
-        MROO(..) => todo!(),
+        MROO(dst_reg, lhs_reg, root_reg) => fmt_op!(
+            "mroo",
+            name_reg(dst_reg),
+            name_reg(lhs_reg),
+            name_reg(root_reg)
+        ),
         MUL(dst_reg, lhs_reg, rhs_reg) => fmt_op!(
             "mul",
             name_reg(dst_reg),
@@ -395,8 +464,13 @@ fn prettify(opcode: &Opcode) -> Markup {
             fmt_op!("muli", name_reg(dst_reg), name_reg(lhs_reg), imm_dec(imm))
         }
         NOOP => fmt_op!("noop"),
-        NOT(..) => todo!(),
-        OR(..) => todo!(),
+        NOT(dst_reg, src_reg) => fmt_op!("not", name_reg(dst_reg), name_reg(src_reg)),
+        OR(dst_reg, lhs_reg, rhs_reg) => fmt_op!(
+            "or",
+            name_reg(dst_reg),
+            name_reg(lhs_reg),
+            name_reg(rhs_reg)
+        ),
         ORI(dst_reg, reg, imm) => {
             fmt_op!(
                 "ori",
@@ -414,12 +488,35 @@ fn prettify(opcode: &Opcode) -> Markup {
             name_reg(src_reg),
             name_reg(len_reg)
         ),
-        SB(..) => todo!(),
-        SLL(..) => todo!(),
+        SB(dst_reg, src_reg, offs) => {
+            fmt_op!("sb", name_reg(dst_reg), name_reg(src_reg), imm_dec(offs))
+        }
+        SLL(dst_reg, src_reg, shft_reg) => fmt_op!(
+            "srl",
+            name_reg(dst_reg),
+            name_reg(src_reg),
+            name_reg(shft_reg)
+        ),
         SLLI(dst_reg, reg, imm) => fmt_op!("slli", name_reg(dst_reg), name_reg(reg), imm_dec(imm)),
-        SMO(..) => todo!(),
-        SRL(..) => todo!(),
-        SRLI(..) => todo!(),
+        SMO(addr_reg, abi_len_reg, msg_reg, coins_reg) => fmt_op!(
+            "smo",
+            name_reg(addr_reg),
+            name_reg(abi_len_reg),
+            name_reg(msg_reg),
+            name_reg(coins_reg)
+        ),
+        SRL(dst_reg, src_reg, shft_reg) => fmt_op!(
+            "srl",
+            name_reg(dst_reg),
+            name_reg(src_reg),
+            name_reg(shft_reg)
+        ),
+        SRLI(dst_reg, src_reg, shft_imm) => fmt_op!(
+            "srli",
+            name_reg(dst_reg),
+            name_reg(src_reg),
+            imm_dec(shft_imm)
+        ),
         SRW(key_reg, other_reg) => fmt_op!("srw", name_reg(key_reg), name_reg(other_reg)),
         SRWQ(dst_reg, key_reg) => fmt_op!("srwq", name_reg(dst_reg), name_reg(key_reg)),
         SUB(dst_reg, lhs_reg, rhs_reg) => fmt_op!(
@@ -432,7 +529,7 @@ fn prettify(opcode: &Opcode) -> Markup {
         SW(dst_reg, reg, offs) => fmt_op!("sw", name_reg(dst_reg), name_reg(reg), imm_dec(offs)),
         SWW(key_reg, reg) => fmt_op!("sww", name_reg(key_reg), name_reg(reg)),
         SWWQ(dst_reg, key_reg) => fmt_op!("swwq", name_reg(dst_reg), name_reg(key_reg)),
-        TIME(..) => todo!(),
+        TIME(dst_reg, hght_reg) => fmt_op!("time", name_reg(dst_reg), name_reg(hght_reg)),
         TR(dst_reg, len_reg, src_reg) => fmt_op!(
             "tr",
             name_reg(dst_reg),
@@ -446,7 +543,12 @@ fn prettify(opcode: &Opcode) -> Markup {
             name_reg(len_reg),
             name_reg(addr_reg)
         ),
-        XOR(..) => todo!(),
+        XOR(dst_reg, lhs_reg, rhs_reg) => fmt_op!(
+            "xor",
+            name_reg(dst_reg),
+            name_reg(lhs_reg),
+            name_reg(rhs_reg)
+        ),
         XORI(dst_reg, reg, imm) => {
             fmt_op!(
                 "xori",
@@ -456,7 +558,10 @@ fn prettify(opcode: &Opcode) -> Markup {
             )
         }
 
-        Undefined => todo!(),
+        Undefined => Markup::text("BAD OPCODE")
+            .colored(Pastel::error())
+            .indented()
+            .padded(12),
     }
 }
 
