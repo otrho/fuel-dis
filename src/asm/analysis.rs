@@ -194,7 +194,9 @@ impl Analyser {
                 }
             }
 
-            Undefined => todo!(),
+            // We can't do much with bad opcodes.  Clear the registers assuming undefined
+            // behaviour.
+            Undefined => self.clear_gp_regs(),
         };
     }
 

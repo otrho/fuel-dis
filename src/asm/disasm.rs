@@ -96,9 +96,8 @@ fn decode(offset: usize, bytes: &[u8]) -> (Opcode, Vec<usize>) {
         | SRW(..) | SRWQ(..) | SUB(..) | SUBI(..) | SW(..) | SWW(..) | SWWQ(..) | TIME(..)
         | TR(..) | TRO(..) | XOR(..) | XORI(..) => (opcode, vec![offset + 4]),
 
-        // Jumps.
+        // Static jumps.
         JI(dst_offset) => (opcode, vec![dst_offset as usize * 4]),
-        JNE(..) => todo!(),
         JNEI(_, _, dst_offset) => (opcode, vec![dst_offset as usize * 4, offset + 4]),
         JNZI(_, dst_offset) => (opcode, vec![dst_offset as usize * 4, offset + 4]),
 
@@ -115,9 +114,12 @@ fn decode(offset: usize, bytes: &[u8]) -> (Opcode, Vec<usize>) {
             )
         }
 
-        // Terminators, including JMP since we don't know where it goes.
-        JMP(_) | RET(..) | RETD(..) | RVRT(..) => (opcode, vec![]),
+        // Terminators, including JMP/JNE since we don't know where they go.
+        // TODO: Perhaps we need to combine decoding with analysis (or make them mutually
+        // recursive) in case we _can_ determine the jump destination.
+        JMP(_) | JNE(..) | RET(..) | RETD(..) | RVRT(..) => (opcode, vec![]),
 
-        Undefined => todo!(),
+        // Bad opcode might as well be a terminator.
+        Undefined => (opcode, vec![]),
     }
 }
