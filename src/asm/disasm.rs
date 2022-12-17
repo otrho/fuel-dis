@@ -55,7 +55,9 @@ impl<'a> Disassembler<'a> {
                     offset,
                     Element {
                         value: ElementValue::Note,
-                        comment: Some("Disassembly attempted to jump to this bad address.".to_owned()),
+                        comment: Some(
+                            "Disassembly attempted to jump to this bad address.".to_owned(),
+                        ),
                     },
                 );
                 continue;

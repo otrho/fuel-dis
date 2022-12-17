@@ -259,7 +259,7 @@ impl Analyser {
             let dst_offset = *offset_val;
             self.jump_offsets.insert(dst_offset);
             self.add_comment(
-                dst_offset as usize * 4,
+                dst_offset * 4,
                 Comment::Label(format!("from {:08x}", from_offset)),
             );
         }
