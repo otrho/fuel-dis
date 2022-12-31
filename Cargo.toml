@@ -4,11 +4,11 @@ edition = "2021"
 license = "MIT"
 name = "forc-dis"
 repository = "https://github.com/otrho/fuel-dis/"
-version = "0.2.1"
+version = "0.2.2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 colorful = "0.2"
-fuel-asm = "0.9"
+fuel-asm = "0.10"
 toml = "0.5"

@@ -10,7 +10,7 @@ checksum = "0bca1619ff57dd7a56b58a8e25ef4199f123e78e503fe1653410350a1b98ae65"
 
 [[package]]
 name = "forc-dis"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "colorful",
  "fuel-asm",
@@ -19,9 +19,9 @@ dependencies = [
 
 [[package]]
 name = "fuel-asm"
-version = "0.9.1"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4386d0dbf40d072b82a80caafce00494f32862b688b47c1e19091a8145606e6"
+checksum = "781568e982a90f25bfaf019196ca135fdf58a1826a8e68fbb1af2ad8b3c2a6fc"
 dependencies = [
  "fuel-types",
  "serde",

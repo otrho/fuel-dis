@@ -187,8 +187,8 @@ impl Analyser {
             | EXP(..) | EXPI(..) | FLAG(..) | GM(..) | GT(..) | GTF(..) | K256(..) | LDC(..)
             | LOG(..) | LOGD(..) | LT(..) | MINT(..) | MLOG(..) | MROO(..) | NOOP | NOT(..)
             | OR(..) | ORI(..) | RET(..) | RETD(..) | RVRT(..) | S256(..) | SLL(..) | SLLI(..)
-            | SMO(..) | SRL(..) | SRLI(..) | SRW(..) | SRWQ(..) | SWW(..) | SWWQ(..) | TIME(..)
-            | TR(..) | TRO(..) | XOR(..) | XORI(..) => {
+            | SCWQ(..) | SMO(..) | SRL(..) | SRLI(..) | SRW(..) | SRWQ(..) | SWW(..) | SWWQ(..)
+            | TIME(..) | TR(..) | TRO(..) | XOR(..) | XORI(..) => {
                 if let Some(def_reg) = def_reg(opcode) {
                     self.regs.remove(def_reg);
                 }
@@ -377,7 +377,7 @@ fn def_reg(opcode: &Opcode) -> Option<&usize> {
         BAL(dst_reg, ..) | BHEI(dst_reg, ..) => Some(dst_reg),
         BHSH(..) | BURN(..) | CALL(..) | CCP(..) | CROO(..) => None,
         CSIZ(dst_reg, ..) => Some(dst_reg),
-        CB(..) | LDC(..) | LOG(..) | LOGD(..) | MINT(..) | RVRT(..) | SMO(..) => None,
+        CB(..) | LDC(..) | LOG(..) | LOGD(..) | MINT(..) | RVRT(..) | SMO(..) | SCWQ(..) => None,
         SRW(dst_reg, ..) => Some(dst_reg),
         SRWQ(..) | SWW(..) | SWWQ(..) => None,
         TIME(dst_reg, ..) => Some(dst_reg),

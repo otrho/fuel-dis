@@ -491,6 +491,12 @@ fn prettify(opcode: &Opcode) -> Markup {
         SB(dst_reg, src_reg, offs) => {
             fmt_op!("sb", name_reg(dst_reg), name_reg(src_reg), imm_dec(offs))
         }
+        SCWQ(key_reg, is_set_reg, count_reg) => fmt_op!(
+            "scwq",
+            name_reg(key_reg),
+            name_reg(is_set_reg),
+            name_reg(count_reg)
+        ),
         SLL(dst_reg, src_reg, shft_reg) => fmt_op!(
             "srl",
             name_reg(dst_reg),
@@ -517,8 +523,19 @@ fn prettify(opcode: &Opcode) -> Markup {
             name_reg(src_reg),
             imm_dec(shft_imm)
         ),
-        SRW(key_reg, other_reg) => fmt_op!("srw", name_reg(key_reg), name_reg(other_reg)),
-        SRWQ(dst_reg, key_reg) => fmt_op!("srwq", name_reg(dst_reg), name_reg(key_reg)),
+        SRW(key_reg, is_set_reg, other_reg) => fmt_op!(
+            "srw",
+            name_reg(key_reg),
+            name_reg(is_set_reg),
+            name_reg(other_reg)
+        ),
+        SRWQ(dst_reg, is_set_reg, key_reg, count_reg) => fmt_op!(
+            "srwq",
+            name_reg(dst_reg),
+            name_reg(is_set_reg),
+            name_reg(key_reg),
+            name_reg(count_reg)
+        ),
         SUB(dst_reg, lhs_reg, rhs_reg) => fmt_op!(
             "sub",
             name_reg(dst_reg),
@@ -527,8 +544,19 @@ fn prettify(opcode: &Opcode) -> Markup {
         ),
         SUBI(dst_reg, reg, imm) => fmt_op!("subi", name_reg(dst_reg), name_reg(reg), imm_dec(imm)),
         SW(dst_reg, reg, offs) => fmt_op!("sw", name_reg(dst_reg), name_reg(reg), imm_dec(offs)),
-        SWW(key_reg, reg) => fmt_op!("sww", name_reg(key_reg), name_reg(reg)),
-        SWWQ(dst_reg, key_reg) => fmt_op!("swwq", name_reg(dst_reg), name_reg(key_reg)),
+        SWW(key_reg, is_set_reg, reg) => fmt_op!(
+            "sww",
+            name_reg(key_reg),
+            name_reg(is_set_reg),
+            name_reg(reg)
+        ),
+        SWWQ(key_reg, is_set_reg, src_reg, count_reg) => fmt_op!(
+            "swwq",
+            name_reg(key_reg),
+            name_reg(is_set_reg),
+            name_reg(src_reg),
+            name_reg(count_reg)
+        ),
         TIME(dst_reg, hght_reg) => fmt_op!("time", name_reg(dst_reg), name_reg(hght_reg)),
         TR(dst_reg, len_reg, src_reg) => fmt_op!(
             "tr",

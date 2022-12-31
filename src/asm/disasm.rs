@@ -94,9 +94,9 @@ fn decode(offset: usize, bytes: &[u8]) -> (Opcode, Vec<usize>) {
         | GT(..) | GTF(..) | K256(..) | LB(..) | LDC(..) | LOG(..) | LOGD(..) | LT(..) | LW(..)
         | MCL(..) | MCLI(..) | MCP(..) | MCPI(..) | MEQ(..) | MINT(..) | MLOG(..) | MOD(..)
         | MODI(..) | MOVE(..) | MROO(..) | MUL(..) | MULI(..) | NOOP | NOT(..) | OR(..)
-        | ORI(..) | S256(..) | SB(..) | SLL(..) | SLLI(..) | SMO(..) | SRL(..) | SRLI(..)
-        | SRW(..) | SRWQ(..) | SUB(..) | SUBI(..) | SW(..) | SWW(..) | SWWQ(..) | TIME(..)
-        | TR(..) | TRO(..) | XOR(..) | XORI(..) => (opcode, vec![offset + 4]),
+        | ORI(..) | S256(..) | SB(..) | SCWQ(..) | SLL(..) | SLLI(..) | SMO(..) | SRL(..)
+        | SRLI(..) | SRW(..) | SRWQ(..) | SUB(..) | SUBI(..) | SW(..) | SWW(..) | SWWQ(..)
+        | TIME(..) | TR(..) | TRO(..) | XOR(..) | XORI(..) => (opcode, vec![offset + 4]),
 
         // Static jumps.
         JI(dst_offset) => (opcode, vec![dst_offset as usize * 4]),
