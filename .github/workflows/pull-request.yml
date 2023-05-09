@@ -1,9 +1,10 @@
-name: build
+name: pull-request
 run-name: Build on pull request.
 
 on:
-  pull_request:
+  push:
     branches: [ $default-branch ]
+  pull_request:
 
 jobs:
   build:
