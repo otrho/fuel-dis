@@ -1,9 +1,9 @@
 name: pull-request
-run-name: Build on pull request.
+run-name: Checks on pull request.
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
 
 jobs:

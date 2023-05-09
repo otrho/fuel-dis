@@ -7,11 +7,11 @@ A disassembler for the [Fuel](https://github.com/FuelLabs) VM byte code.
 ## About
 
 The [forc](https://github.com/FuelLabs/sway/tree/master/forc) utility provides a `parse-bytecode` command which will print a bare-bones disassembly with
-the raw values decoded from a contract's binary bytecode.  It is limited by assuming that every
+the raw values decoded from a contract's binary bytecode. It is limited by assuming that every
 32-bit word is an executable instruction, although it does attempt to output some helpful comments
-where it can.  But generally it is quite hard to read.
+where it can. But generally it is quite hard to read.
 
-`forc-dis` attempts to produces a far more readable disassembly.  It will follow the control flow
+`forc-dis` attempts to produces a far more readable disassembly. It will follow the control flow
 from the entry point, making no assumptions about whether decoded bytes are instructions or data.
 It also gives readable names to registers, annotates locations which are read by memory instructions
 and names known constant values used by the VM.
@@ -22,7 +22,7 @@ It also syntax highlights the listing in a fairly pleasing colour scheme.
 
 ### Via crates.io
 
-```
+```console
 cargo install forc-dis
 ```
 
@@ -30,26 +30,26 @@ cargo install forc-dis
 
 Clone this repository and build with Cargo as usual.
 
-```
+```console
 git clone https://github.com/otrho/fuel-dis.git
 cd fuel-dis
 cargo build --release
 ```
 
-It can then be run in place using `cargo run --release`.  Or it can be installed using `cargo
+It can then be run in place using `cargo run --release`. Or it can be installed using `cargo
 install --path .`.
 
 ## Use
 
 `forc-dis` will take the path to the bytecode binary as a command line argument.
 
-Alternatively, if `forc-dis` is in your path it may be used as a Forc plugin.  From within a Forc
+Alternatively, if `forc-dis` is in your path it may be used as a Forc plugin. From within a Forc
 project it can be invoked using `forc dis`, in which case it will attempt to find the bytecode
 binary automatically.
 
 ## Example
 
-```
+```console
 $ forc new example
 
 To compile, use `forc build`, and to run tests use `forc test`
